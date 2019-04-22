@@ -12,7 +12,7 @@ async def handler(request: web.Request) -> web.Response:
     domain = request.rel_url.query.get('domain', '') or request.match_info.get('domain', '')
 
     try:
-        timeout = float(request.rel_url.query.get('timeout', MAX_TIMEOUT))
+        timeout = float(min(request.rel_url.query.get('timeout', MAX_TIMEOUT), MAX_TIMEOUT))
     except ValueError:
         timeout = MAX_TIMEOUT
 
