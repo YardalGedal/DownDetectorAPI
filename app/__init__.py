@@ -27,8 +27,5 @@ def run() -> None:
 
 
 def add_session(app) -> None:
-    async def close_session(app):
-        await app['session'].close()
-
     app['session'] = ClientSession()
-    app.on_shutdown.append(close_session)
+    app.on_shutdown.append(lambda app: app['session'].close())
