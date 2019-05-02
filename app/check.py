@@ -1,3 +1,5 @@
+from typing import Optional
+
 from aiohttp import ClientSession, ClientTimeout
 from .statuses import Up, Down, Unknown
 
@@ -17,7 +19,7 @@ class ConnectionFailedError(CheckError):
     pass
 
 
-async def check(domain: str, timeout: int or float, session: ClientSession) -> dict:
+async def check(domain: str, timeout: Optional[int, float], session: ClientSession) -> dict:
     res = await result(domain, timeout, session)
     check_result = {'status': str(res)}
 
@@ -29,7 +31,7 @@ async def check(domain: str, timeout: int or float, session: ClientSession) -> d
     return check_result
 
 
-async def result(domain: str, timeout: int or float, session: ClientSession) -> (Up, Down, Unknown):
+async def result(domain: str, timeout: Optional[int, float], session: ClientSession) -> Optional[Up, Down, Unknown]:
     if not domain:
         return Unknown(extra=NoDomainError.__name__)
 
@@ -40,5 +42,5 @@ async def result(domain: str, timeout: int or float, session: ClientSession) -> 
         return Unknown(extra=ConnectionFailedError.__name__)
 
 
-def response_by_code(code: int) -> Up or Down:
+def response_by_code(code: int) -> Optional[Up, Down]:
     return Up(code) if code in UP_CODES else Down(code)

@@ -1,3 +1,5 @@
+from typing import NoReturn
+
 from aiohttp import web
 from aiohttp import ClientSession
 from .check import check, MAX_TIMEOUT
@@ -19,13 +21,13 @@ async def handler(request: web.Request) -> web.Response:
     return web.json_response(await check(domain, timeout, request.app['session']))
 
 
-def run() -> None:
+def run() -> NoReturn:
     app = web.Application()
     add_session(app)
     app.add_routes([web.get('/', handler), web.get('/domain/{domain}', handler)])
     web.run_app(app, port=PORT, reuse_port=True)
 
 
-def add_session(app) -> None:
+def add_session(app: web.Application) -> None:
     app['session'] = ClientSession()
-    app.on_shutdown.append(lambda app: app['session'].close())
+    app.on_shutdown.append(lambda a: a['session'].close())
